@@ -32,7 +32,7 @@
   <div class="overlay"></div>
 
   <div class="container">
-    <h2>APOLLO_LINO</h2>
+    <h2>APOLLO</h2>
     <div class="form-group">
       <label for="productName">Produto:</label>
       <input type="text" class="form-control" id="productName" maxlength="30">
@@ -86,102 +86,226 @@
     <div id="selectedProductDetails"></div>
   </div>
 
-<script>
-  function saveProduct() {
-    var productName = document.getElementById("productName").value.trim().toUpperCase();
-    var productPerimeter = document.getElementById("productPerimeter").value.trim();
-    var productCut = document.getElementById("productCut").value.trim();
-    var productRepetition = document.getElementById("productRepetition").value.trim();
-    var productChagrin = document.getElementById("productChagrin").value.trim();
-    var productSpeed = document.getElementById("productSpeed").value.trim(); // Obtendo valor da velocidade
-    var productComments = document.getElementById("productComments").value.trim();
-    var productImageInput = document.getElementById("productImage");
-    var currentDate = new Date();
-    var formattedDate = currentDate.toLocaleDateString('pt-BR') + ' ' + currentDate.toLocaleTimeString('pt-BR');
-
-    if (productName === "") {
-      alert("Por favor, insira o nome do produto.");
-      return;
-    }
-
-    if (isNaN(productPerimeter)) {
-      alert("O perímetro do produto deve ser um número.");
-      return;
-    }
-
-    if (isNaN(productCut)) {
-      alert("O corte do perímetro deve ser um número.");
-      return;
-    }
-
-    if (isNaN(productRepetition)) {
-      alert("A repetição deve ser um número com até 3 casas decimais.");
-      return;
-    }
-
-    if (isNaN(productSpeed)) {
-      alert("A velocidade deve ser um número com até 3 casas decimais.");
-      return;
-    }
-
-    var products = JSON.parse(localStorage.getItem("products")) || [];
-    var existingProductIndex = products.findIndex(function(product) {
-      return product.name === productName && product.perimeter === parseFloat(productPerimeter);
+  <script>
+    document.addEventListener("DOMContentLoaded", function() {
+      loadProducts();
+      loadBackgroundImage();
     });
 
-    if (productImageInput.files && productImageInput.files[0]) {
-      var reader = new FileReader();
-      reader.onload = function(e) {
-        var newImage = e.target.result;
-        saveProductData(newImage);
-      };
-      reader.readAsDataURL(productImageInput.files[0]);
-    } else {
-      var existingImage = existingProductIndex !== -1 ? products[existingProductIndex].image : null;
-      saveProductData(existingImage);
-    }
+    function saveProduct() {
+      var productName = document.getElementById("productName").value.trim().toUpperCase();
+      var productPerimeter = document.getElementById("productPerimeter").value.trim();
+      var productCut = document.getElementById("productCut").value.trim();
+      var productRepetition = document.getElementById("productRepetition").value.trim();
+      var productChagrin = document.getElementById("productChagrin").value.trim();
+      var productSpeed = document.getElementById("productSpeed").value.trim(); // Obtendo valor da velocidade
+      var productComments = document.getElementById("productComments").value.trim();
+      var productImageInput = document.getElementById("productImage");
+      var currentDate = new Date();
+      var formattedDate = currentDate.toLocaleDateString('pt-BR') + ' ' + currentDate.toLocaleTimeString('pt-BR');
 
-    function saveProductData(newImage) {
-      if (existingProductIndex !== -1) {
-        products[existingProductIndex].cut = parseFloat(productCut);
-        products[existingProductIndex].repetition = parseFloat(productRepetition);
-        products[existingProductIndex].chagrin = productChagrin;
-        products[existingProductIndex].speed = parseFloat(productSpeed);
-        products[existingProductIndex].image = newImage || products[existingProductIndex].image;
-        if (!products[existingProductIndex].comments) {
-          products[existingProductIndex].comments = [];
-        }
-        products[existingProductIndex].comments.push({ text: productComments, date: formattedDate });
-      } else {
-        products.push({
-          name: productName,
-          perimeter: parseFloat(productPerimeter),
-          cut: parseFloat(productCut),
-          repetition: parseFloat(productRepetition),
-          chagrin: productChagrin,
-          speed: parseFloat(productSpeed),
-          comments: [{ text: productComments, date: formattedDate }],
-          image: newImage,
-          created_at: new Date()
-        });
+      if (productName === "") {
+        alert("Por favor, insira o nome do produto.");
+        return;
       }
 
-      localStorage.setItem("products", JSON.stringify(products));
-      loadProducts();
+      if (isNaN(productPerimeter)) {
+        alert("O perímetro do produto deve ser um número.");
+        return;
+      }
 
-      document.getElementById("productName").value = "";
-      document.getElementById("productPerimeter").value = "";
-      document.getElementById("productCut").value = "";
-      document.getElementById("productRepetition").value = "";
-      document.getElementById("productChagrin").value = "";
-      document.getElementById("productSpeed").value = ""; // Limpando campo de velocidade
-      document.getElementById("productComments").value = "";
-      document.getElementById("productImage").value = "";
+      if (isNaN(productCut)) {
+        alert("O corte do perímetro deve ser um número.");
+        return;
+      }
 
-      alert("Produto salvo com sucesso!");
+      if (isNaN(productRepetition)) {
+        alert("A repetição deve ser um número com até 3 casas decimais.");
+        return;
+      }
+
+      if (isNaN(productSpeed)) {
+        alert("A velocidade deve ser um número com até 3 casas decimais.");
+        return;
+      }
+
+      var productImage = "";
+      if (productImageInput.files && productImageInput.files[0]) {
+        var reader = new FileReader();
+        reader.onload = function(e) {
+          productImage = e.target.result;
+          saveProductData();
+        };
+        reader.readAsDataURL(productImageInput.files[0]);
+      } else {
+        saveProductData();
+      }
+
+      function saveProductData() {
+        var products = JSON.parse(localStorage.getItem("products")) || [];
+        var existingProductIndex = products.findIndex(function(product) {
+          return product.name === productName && product.perimeter === parseFloat(productPerimeter);
+        });
+
+        if (existingProductIndex !== -1) {
+          products[existingProductIndex].cut = parseFloat(productCut);
+          products[existingProductIndex].repetition = parseFloat(productRepetition);
+          products[existingProductIndex].chagrin = productChagrin;
+          products[existingProductIndex].speed = parseFloat(productSpeed);
+          if (!products[existingProductIndex].comments) {
+            products[existingProductIndex].comments = [];
+          }
+          products[existingProductIndex].comments.push({ text: productComments, date: formattedDate });
+          products[existingProductIndex].image = productImage;
+        } else {
+          products.push({
+            name: productName,
+            perimeter: parseFloat(productPerimeter),
+            cut: parseFloat(productCut),
+            repetition: parseFloat(productRepetition),
+            chagrin: productChagrin,
+            speed: parseFloat(productSpeed),
+            comments: [{ text: productComments, date: formattedDate }],
+            image: productImage,
+            created_at: new Date()
+          });
+        }
+
+        localStorage.setItem("products", JSON.stringify(products));
+        loadProducts();
+
+        document.getElementById("productName").value = "";
+        document.getElementById("productPerimeter").value = "";
+        document.getElementById("productCut").value = "";
+        document.getElementById("productRepetition").value = "";
+        document.getElementById("productChagrin").value = "";
+        document.getElementById("productSpeed").value = ""; // Limpando campo de velocidade
+        document.getElementById("productComments").value = "";
+        document.getElementById("productImage").value = "";
+
+        alert("Produto salvo com sucesso!");
+      }
     }
-  }
-</script>
 
+    function loadProducts() {
+      var products = JSON.parse(localStorage.getItem("products")) || [];
+      products.sort(function(a, b) {
+        var nameA = a.name.toUpperCase();
+        var nameB = b.name.toUpperCase();
+        if (nameA < nameB) {
+          return -1;
+        }
+        if (nameA > nameB) {
+          return 1;
+        }
+        return 0;
+      });
+
+      var select = document.getElementById("productSelect");
+      select.innerHTML = '<option value="">Selecione um produto</option>';
+
+      products.forEach(function(product) {
+        var option = document.createElement("option");
+        option.value = JSON.stringify(product);
+        option.textContent = product.name;
+        select.appendChild(option);
+      });
+    }
+
+    function showSelectedProduct() {
+      var selectedProduct = JSON.parse(document.getElementById("productSelect").value);
+      if (!selectedProduct) {
+        document.getElementById("selectedProductDetails").innerHTML = "";
+        return;
+      }
+
+      var detailsContainer = document.getElementById("selectedProductDetails");
+      var imageHtml = selectedProduct.image ? `<img src="${selectedProduct.image}" alt="Product Image" style="max-width: 200px; max-height: 200px;">` : "";
+
+      var commentsHtml = selectedProduct.comments.map(function(comment, index) {
+        return `<tr>
+                  <td>${comment.text}</td>
+                  <td>${comment.date}</td>
+                  <td><button class="btn btn-sm btn-danger" onclick="removeComment('${selectedProduct.name}', ${selectedProduct.perimeter}, ${index})">Excluir</button></td>
+                </tr>`;
+      }).join("");
+
+      detailsContainer.innerHTML = `
+        <h4>Dados do Produto Selecionado</h4>
+        ${imageHtml}
+        <p><strong>Nome:</strong> ${selectedProduct.name}</p>
+        <p><strong>Perímetro:</strong> ${selectedProduct.perimeter}</p>
+        <p><strong>Corte do Perímetro:</strong> ${selectedProduct.cut}</p>
+        <p><strong>Repetição:</strong> ${selectedProduct.repetition}</p>
+        <p><strong>Chagrin:</strong> ${selectedProduct.chagrin}</p>
+        <p><strong>Velocidade:</strong> ${selectedProduct.speed}</p>
+        <h5>Comentários:</h5>
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Comentário</th>
+              <th>Data</th>
+              <th>Ações</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${commentsHtml}
+          </tbody>
+        </table>
+      `;
+    }
+
+    function removeComment(productName, productPerimeter, commentIndex) {
+      var products = JSON.parse(localStorage.getItem("products")) || [];
+      var productIndex = products.findIndex(function(product) {
+        return product.name === productName && product.perimeter === productPerimeter;
+      });
+
+      if (productIndex !== -1) {
+        products[productIndex].comments.splice(commentIndex, 1);
+        localStorage.setItem("products", JSON.stringify(products));
+        showSelectedProduct();
+        alert("Comentário removido com sucesso!");
+      }
+    }
+
+    function removeSelectedProduct() {
+      var selectedProduct = JSON.parse(document.getElementById("productSelect").value);
+      if (!selectedProduct) {
+        alert("Nenhum produto selecionado.");
+        return;
+      }
+
+      var products = JSON.parse(localStorage.getItem("products")) || [];
+      var updatedProducts = products.filter(function(product) {
+        return product.name !== selectedProduct.name || product.perimeter !== selectedProduct.perimeter;
+      });
+
+      localStorage.setItem("products", JSON.stringify(updatedProducts));
+      loadProducts();
+      document.getElementById("selectedProductDetails").innerHTML = "";
+      alert("Produto removido com sucesso!");
+    }
+
+    function setBackgroundImage() {
+      var backgroundImageInput = document.getElementById("backgroundImage");
+      if (backgroundImageInput.files && backgroundImageInput.files[0]) {
+        var reader = new FileReader();
+        reader.onload = function(e) {
+          var imageUrl = e.target.result;
+          document.body.style.backgroundImage = `url('${imageUrl}')`;
+          localStorage.setItem("backgroundImage", imageUrl);
+        };
+        reader.readAsDataURL(backgroundImageInput.files[0]);
+      }
+    }
+
+    function loadBackgroundImage() {
+      var backgroundImage = localStorage.getItem("backgroundImage");
+      if (backgroundImage) {
+        document.body.style.backgroundImage = `url('${backgroundImage}')`;
+      }
+    }
+  </script>
 </body>
 </html>
