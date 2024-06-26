@@ -32,7 +32,7 @@
   <div class="overlay"></div>
 
   <div class="container">
-    <h2>APOLLO</h2>
+    <h2>APOLLO_LINO</h2>
     <div class="form-group">
       <label for="productName">Produto:</label>
       <input type="text" class="form-control" id="productName" maxlength="30">
@@ -97,7 +97,7 @@
       var productPerimeter = document.getElementById("productPerimeter").value.trim();
       var productCut = document.getElementById("productCut").value.trim();
       var productRepetition = document.getElementById("productRepetition").value.trim();
-      var productChagrin = document.getElementById("productChagrin").value.trim();
+      var productChagrim = document.getElementById("productChagrin").value.trim();
       var productSpeed = document.getElementById("productSpeed").value.trim(); // Obtendo valor da velocidade
       var productComments = document.getElementById("productComments").value.trim();
       var productImageInput = document.getElementById("productImage");
@@ -150,7 +150,7 @@
         if (existingProductIndex !== -1) {
           products[existingProductIndex].cut = parseFloat(productCut);
           products[existingProductIndex].repetition = parseFloat(productRepetition);
-          products[existingProductIndex].chagrin = productChagrin;
+          products[existingProductIndex].chagrim = productChagrin;
           products[existingProductIndex].speed = parseFloat(productSpeed);
           if (!products[existingProductIndex].comments) {
             products[existingProductIndex].comments = [];
@@ -163,7 +163,7 @@
             perimeter: parseFloat(productPerimeter),
             cut: parseFloat(productCut),
             repetition: parseFloat(productRepetition),
-            chagrin: productChagrin,
+            chagrin: productChagrim,
             speed: parseFloat(productSpeed),
             comments: [{ text: productComments, date: formattedDate }],
             image: productImage,
@@ -178,7 +178,7 @@
         document.getElementById("productPerimeter").value = "";
         document.getElementById("productCut").value = "";
         document.getElementById("productRepetition").value = "";
-        document.getElementById("productChagrin").value = "";
+        document.getElementById("productChagrim").value = "";
         document.getElementById("productSpeed").value = ""; // Limpando campo de velocidade
         document.getElementById("productComments").value = "";
         document.getElementById("productImage").value = "";
@@ -237,7 +237,7 @@
         <p><strong>Perímetro:</strong> ${selectedProduct.perimeter}</p>
         <p><strong>Corte do Perímetro:</strong> ${selectedProduct.cut}</p>
         <p><strong>Repetição:</strong> ${selectedProduct.repetition}</p>
-        <p><strong>Chagrin:</strong> ${selectedProduct.chagrin}</p>
+        <p><strong>Chagrim:</strong> ${selectedProduct.chagrin}</p>
         <p><strong>Velocidade:</strong> ${selectedProduct.speed}</p>
         <h5>Comentários:</h5>
         <table class="table">
