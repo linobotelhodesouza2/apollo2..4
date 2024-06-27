@@ -22,6 +22,19 @@
   var db = firebase.firestore();
   var storage = firebase.storage();
 </script>
+<script>
+  function saveProductData(product) {
+    db.collection("products").add(product)
+      .then((docRef) => {
+        console.log("Produto salvo com ID: ", docRef.id);
+        alert("Produto salvo com sucesso!");
+      })
+      .catch((error) => {
+        console.error("Erro ao salvar o produto: ", error);
+        alert("Erro ao salvar o produto.");
+      });
+  }
+</script>
 
   <title>APOLLO 2.4</title>
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
