@@ -35,6 +35,47 @@
       });
   }
 </script>
+<script>
+  function saveProduct() {
+    var product = {
+      name: document.getElementById("productName").value.trim().toUpperCase(),
+      perimeter: parseFloat(document.getElementById("productPerimeter").value.trim()),
+      cut: parseFloat(document.getElementById("productCut").value.trim()),
+      repetition: parseFloat(document.getElementById("productRepetition").value.trim()),
+      chagrin: document.getElementById("productChagrin").value.trim(),
+      speed: parseFloat(document.getElementById("productSpeed").value.trim()),
+      comments: [{ text: document.getElementById("productComments").value.trim(), date: new Date().toLocaleString() }]
+    };
+    saveProductData(product);
+  }
+</script>
+<script>
+  function loadProducts() {
+    db.collection("products").get().then((querySnapshot) => {
+      var products = [];
+      querySnapshot.forEach((doc) => {
+        products.push(doc.data());
+      });
+      displayProducts(products);
+    });
+  }
+
+  function displayProducts(products) {
+    var select = document.getElementById("productSelect");
+    select.innerHTML = '<option value="">Selecione um produto</option>';
+    products.forEach((product) => {
+      var option = document.createElement("option");
+      option.value = JSON.stringify(product);
+      option.textContent = product.name;
+      select.appendChild(option);
+    });
+  }
+
+  // Chamar a função loadProducts ao carregar a página
+  document.addEventListener("DOMContentLoaded", function() {
+    loadProducts();
+  });
+</script>
 
   <title>APOLLO 2.4</title>
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
