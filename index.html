@@ -76,6 +76,92 @@
     loadProducts();
   });
 </script>
+<script>
+  function uploadImage(file, product) {
+    var storageRef = storage.ref('product_images/' + file.name);
+    var uploadTask = storageRef.put(file);
+
+    uploadTask.on('state_changed', 
+      function(snapshot) {
+        var progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+        console.log('Upload is ' + progress + '% done');
+      }, 
+      function(error) {
+        console.error('Erro ao carregar a imagem: ', error);
+        alert('Erro ao carregar a imagem.');
+      }, 
+      function() {
+        uploadTask.snapshot.ref.getDownloadURL().then(function(downloadURL) {
+          product.image = downloadURL;
+          saveProductData(product);
+        });
+      }
+    );
+  }
+
+  function saveProduct() {
+    var product = {
+      name: document.getElementById("productName").value.trim().toUpperCase(),
+      perimeter: parseFloat(document.getElementById("productPerimeter").value.trim()),
+      cut: parseFloat(document.getElementById("productCut").value.trim()),
+      repetition: parseFloat(document.getElementById("productRepetition").value.trim()),
+      chagrin: document.getElementById("productChagrin").value.trim(),
+      speed: parseFloat(document.getElementById("productSpeed").value.trim()),
+      comments: [{ text: document.getElementById("productComments").value.trim(), date: new Date().toLocaleString() }]
+    };
+
+    var fileInput = document.getElementById("productImage");
+    if (fileInput.files.length > 0) {
+      uploadImage(fileInput.files[0], product);
+    } else {
+      saveProductData(product);
+    }
+  }
+</script>
+<script>
+  function showSelectedProduct() {
+    var selectedProduct = JSON.parse(document.getElementById("productSelect").value);
+    if (!selectedProduct) {
+      document.getElementById("selectedProductDetails").innerHTML = "";
+      return;
+    }
+
+    var detailsContainer = document.getElementById("selectedProductDetails");
+    var imageHtml = selectedProduct.image ? `<img src="${selectedProduct.image}" alt="Product Image" style="max-width: 200px; max-height: 200px;">` : "";
+
+    var commentsHtml = selectedProduct.comments.map(function(comment, index) {
+      return `<tr>
+                <td>${comment.text}</td>
+                <td>${comment.date}</td>
+                <td><button class="btn btn-sm btn-danger" onclick="removeComment('${selectedProduct.name}', ${selectedProduct.perimeter}, ${index})">Excluir</button></td>
+              </tr>`;
+    }).join("");
+
+    detailsContainer.innerHTML = `
+      <h4>Dados do Produto Selecionado</h4>
+      ${imageHtml}
+      <p><strong>Nome:</strong> ${selectedProduct.name}</p>
+      <p><strong>Perímetro:</strong> ${selectedProduct.perimeter}</p>
+      <p><strong>Corte do Perímetro:</strong> ${selectedProduct.cut}</p>
+      <p><strong>Repetição:</strong> ${selectedProduct.repetition}</p>
+      <p><strong>Chagrin:</strong> ${selectedProduct.chagrin}</p>
+      <p><strong>Velocidade:</strong> ${selectedProduct.speed}</p>
+      <h5>Comentários:</h5>
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Comentário</th>
+            <th>Data</th>
+            <th>Ações</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${commentsHtml}
+        </tbody>
+      </table>
+    `;
+  }
+</script>
 
   <title>APOLLO 2.4</title>
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
