@@ -3,6 +3,26 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-firestore.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-storage.js"></script>
+<script>
+  var firebaseConfig = {
+    apiKey: "AIzaSyBD5K4jkQk1c_7CB_S9R1F1W7RMC11T03k",
+    authDomain: "apollo-ff7be.firebaseapp.com",
+    projectId: "apollo-ff7be",
+    storageBucket: "apollo-ff7be.appspot.com",
+    messagingSenderId: "769094311342",
+    appId: "1:769094311342:web:caeab1606e6802034c3c3f"
+  };
+  // Inicializar o Firebase
+  firebase.initializeApp(firebaseConfig);
+
+  // Referências ao Firestore e Storage
+  var db = firebase.firestore();
+  var storage = firebase.storage();
+</script>
+
   <title>APOLLO 2.4</title>
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
   <style>
